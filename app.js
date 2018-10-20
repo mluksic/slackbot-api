@@ -9,6 +9,9 @@ const teamRoutes = require('./api/routes/teams');
 const employeesRoutes = require('./api/routes/employees');
 
 const fixtures = require('./api/fixtures');
+const botRoutes = require('./api/routes/bot');
+const kudosRoutes = require('./api/routes/kudos');
+const kudoApproveRoutes = require('./api/routes/kudoApprove');
 
 mongoose.connect(
     'mongodb://' +
@@ -41,6 +44,9 @@ app.use((res, req, next) => {
 app.use('/roles', rolesRoutes);
 app.use('/teams', teamRoutes);
 app.use('/employees', employeesRoutes);
+app.use('/bot', botRoutes);
+app.use('/kudos', kudosRoutes);
+app.use('/kudoApprove', kudoApproveRoutes);
 
 app.use((req, res, next) => {
     const error = new Error('Not found');

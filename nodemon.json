@@ -1,6 +1,7 @@
 {
     "env": {
         "MONGO_ATLAS_USERNAME": "atlas-admin",
-        "MONGO_ATLAS_PW": "admin123"
+        "MONGO_ATLAS_PW": "admin123",
+        "SLACK_TOKEN": "xoxb-460185489317-459921751539-aBOTAgojhVOxggZNfXc0NGgt"
     }
 }
