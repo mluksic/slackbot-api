@@ -4,7 +4,7 @@ const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
-const productRoutes = require('./api/routes/products');
+const rolesRoutes = require('./api/routes/roles');
 const orderRoutes = require('./api/routes/orders');
 
 mongoose.connect(
@@ -12,7 +12,7 @@ mongoose.connect(
         process.env.MONGO_ATLAS_USERNAME +
         ':' +
         process.env.MONGO_ATLAS_PW +
-        '@node-rest-shop-shard-00-00-hzk9a.mongodb.net:27017,node-rest-shop-shard-00-01-hzk9a.mongodb.net:27017,node-rest-shop-shard-00-02-hzk9a.mongodb.net:27017/test?ssl=true&replicaSet=node-rest-shop-shard-0&authSource=admin&retryWrites=true',
+        '@node-rest-shop-shard-00-00-hzk9a.mongodb.net:27017,node-rest-shop-shard-00-01-hzk9a.mongodb.net:27017,node-rest-shop-shard-00-02-hzk9a.mongodb.net:27017/slackbot?ssl=true&replicaSet=node-rest-shop-shard-0&authSource=admin&retryWrites=true',
     { useNewUrlParser: true }
 );
 
@@ -32,7 +32,7 @@ app.use((res, req, next) => {
     next();
 });
 
-app.use('/products', productRoutes);
+app.use('/roles', rolesRoutes);
 app.use('/orders', orderRoutes);
 
 app.use((req, res, next) => {
