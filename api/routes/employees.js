@@ -2,11 +2,10 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 
-const Team = require('../models/team');
 const Employee = require('../models/employee');
 
 router.get('/', (req, res, next) => {
-    Team.find()
+    Employee.find()
         .exec()
         .then(docs => {
             res.status(200).json(docs);
@@ -17,9 +16,9 @@ router.get('/', (req, res, next) => {
         });
 });
 
-router.get('/:teamId', (req, res, next) => {
-    const id = req.params.teamId;
-    Team.findById(id)
+router.get('/:employeeId', (req, res, next) => {
+    const id = req.params.employeeId;
+    Employee.findById(id)
         .exec()
         .then(doc => {
             if (doc) {
@@ -32,19 +31,6 @@ router.get('/:teamId', (req, res, next) => {
         })
         .catch(err => {
             console.log(err);
-            res.status(500).json({
-                error: err
-            });
-        });
-});
-
-router.get('/:teamId/members', (req, res, next) => {
-    Employee.find({ team: req.params.teamId })
-        .exec()
-        .then(members => {
-            res.status(200).json(members);
-        })
-        .catch(err => {
             res.status(500).json({
                 error: err
             });

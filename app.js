@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 
 const rolesRoutes = require('./api/routes/roles');
 const teamRoutes = require('./api/routes/teams');
+const employeesRoutes = require('./api/routes/employees');
 
 const fixtures = require('./api/fixtures');
 
@@ -39,6 +40,7 @@ app.use((res, req, next) => {
 
 app.use('/roles', rolesRoutes);
 app.use('/teams', teamRoutes);
+app.use('/employees', employeesRoutes);
 
 app.use((req, res, next) => {
     const error = new Error('Not found');
