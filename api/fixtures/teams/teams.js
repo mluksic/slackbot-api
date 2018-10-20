@@ -8,7 +8,10 @@ exports.loadTeams = () => {
                 Team.insertMany(
                     [
                         {
-                            name: 'Testing team'
+                            name: 'Red team'
+                        },
+                        {
+                            name: 'Green team'
                         }
                     ],
                     error => {
