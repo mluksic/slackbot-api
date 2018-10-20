@@ -1,10 +1,10 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-const Product = require("../models/product");
+const Product = require('../models/product');
 
-router.get("/", (req, res, next) => {
+router.get('/', (req, res, next) => {
     Product.find()
         .exec()
         .then(docs => {
@@ -16,7 +16,7 @@ router.get("/", (req, res, next) => {
         });
 });
 
-router.post("/", (req, res, next) => {
+router.post('/', (req, res, next) => {
     const product = new Product({
         _id: new mongoose.Types.ObjectId(),
         name: req.body.name,
@@ -36,7 +36,7 @@ router.post("/", (req, res, next) => {
         });
 });
 
-router.get("/:productId", (req, res, next) => {
+router.get('/:productId', (req, res, next) => {
     const id = req.params.productId;
     Product.findById(id)
         .exec()
@@ -45,7 +45,7 @@ router.get("/:productId", (req, res, next) => {
                 res.status(200).json(doc);
             } else {
                 res.status(404).json({
-                    message: "No valid entry found for id"
+                    message: 'No valid entry found for id'
                 });
             }
         })
@@ -57,7 +57,7 @@ router.get("/:productId", (req, res, next) => {
         });
 });
 
-router.put("/:productId", (req, res, json) => {
+router.put('/:productId', (req, res, json) => {
     const id = req.params.productId;
     const updateOps = {};
     for (const ops of req.body) {
@@ -80,7 +80,7 @@ router.put("/:productId", (req, res, json) => {
         });
 });
 
-router.delete("/:productId", (req, res, json) => {
+router.delete('/:productId', (req, res, json) => {
     const id = req.params.productId;
     Product.remove({ _id: id })
         .exec()
