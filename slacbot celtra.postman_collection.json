@@ -6,7 +6,7 @@
 	},
 	"item": [
 		{
-			"name": "products",
+			"name": "roles",
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -15,19 +15,19 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "{{url}}/products",
+					"raw": "{{url}}/roles",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
-						"products"
+						"roles"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "orders",
+			"name": "teams",
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -36,12 +36,56 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "{{url}}/orders",
+					"raw": "{{url}}/teams",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
-						"orders"
+						"teams"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "teams/{id}/members",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/teams/5bcb5b2bf60db74ec46d26fd/members",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"teams",
+						"5bcb5b2bf60db74ec46d26fd",
+						"members"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "employees",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/employees",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"employees"
 					]
 				}
 			},
