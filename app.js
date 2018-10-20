@@ -5,7 +5,9 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
 const rolesRoutes = require('./api/routes/roles');
-const orderRoutes = require('./api/routes/orders');
+const teamRoutes = require('./api/routes/teams');
+
+const fixtures = require('./api/fixtures');
 
 mongoose.connect(
     'mongodb://' +
@@ -15,6 +17,9 @@ mongoose.connect(
         '@node-rest-shop-shard-00-00-hzk9a.mongodb.net:27017,node-rest-shop-shard-00-01-hzk9a.mongodb.net:27017,node-rest-shop-shard-00-02-hzk9a.mongodb.net:27017/slackbot?ssl=true&replicaSet=node-rest-shop-shard-0&authSource=admin&retryWrites=true',
     { useNewUrlParser: true }
 );
+
+// load data fixtures
+fixtures.loadData();
 
 app.use(morgan('dev'));
 
@@ -33,7 +38,7 @@ app.use((res, req, next) => {
 });
 
 app.use('/roles', rolesRoutes);
-app.use('/orders', orderRoutes);
+app.use('/teams', teamRoutes);
 
 app.use((req, res, next) => {
     const error = new Error('Not found');
