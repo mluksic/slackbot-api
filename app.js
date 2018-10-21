@@ -13,6 +13,7 @@ const fixtures = require('./api/fixtures');
 const botRoutes = require('./api/routes/bot');
 const kudosRoutes = require('./api/routes/kudos');
 const kudoApproveRoutes = require('./api/routes/kudoApprove');
+const scoringRoutes = require('./api/routes/scoring');
 
 mongoose.connect(
     'mongodb://' +
@@ -40,6 +41,7 @@ app.use('/employees', employeesRoutes);
 app.use('/bot', botRoutes);
 app.use('/kudos', kudosRoutes);
 app.use('/kudoApprove', kudoApproveRoutes);
+app.use('/scoring', scoringRoutes);
 
 app.use((req, res, next) => {
     const error = new Error('Not found');

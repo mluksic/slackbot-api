@@ -9,4 +9,6 @@ routes.route('/:id').get(teams.findById);
 
 routes.route('/:id/members').get(teams.findMembers);
 
+routes.route('/kudo').get(teams.findAll);
+
 module.exports = routes;

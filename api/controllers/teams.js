@@ -1,5 +1,6 @@
 const Team = require('../models/team');
 const Employee = require('../models/employee');
+const Kudo = require('../models/kudo');
 
 exports.findAll = (req, res, next) => {
     Team.find()
