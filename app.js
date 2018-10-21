@@ -4,6 +4,7 @@ const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const hateoasLinker = require('express-hateoas-links');
 
 const rolesRoutes = require('./api/routes/roles');
 const teamRoutes = require('./api/routes/teams');
@@ -31,6 +32,8 @@ app.use(morgan('dev'));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
+app.use(hateoasLinker);
 
 // CORS header
 app.use(cors());
