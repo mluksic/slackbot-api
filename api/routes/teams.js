@@ -1,54 +1,12 @@
 const express = require('express');
-const router = express.Router();
-const mongoose = require('mongoose');
+const routes = express.Router({ mergeParams: true });
 
-const Team = require('../models/team');
-const Employee = require('../models/employee');
+const teams = require('../controllers/teams');
 
-router.get('/', (req, res, next) => {
-    Team.find()
-        .exec()
-        .then(docs => {
-            res.status(200).json(docs);
-        })
-        .catch(err => {
-            res.status(500).json(err.message);
-            console.log(err.message);
-        });
-});
+routes.route('/').get(teams.findAll);
 
-router.get('/:teamId', (req, res, next) => {
-    const id = req.params.teamId;
-    Team.findById(id)
-        .exec()
-        .then(doc => {
-            if (doc) {
-                res.status(200).json(doc);
-            } else {
-                res.status(404).json({
-                    message: 'No valid entry found'
-                });
-            }
-        })
-        .catch(err => {
-            console.log(err);
-            res.status(500).json({
-                error: err
-            });
-        });
-});
+routes.route('/:id').get(teams.findById);
 
-router.get('/:teamId/members', (req, res, next) => {
-    Employee.find({ team: req.params.teamId })
-        .exec()
-        .then(members => {
-            res.status(200).json(members);
-        })
-        .catch(err => {
-            res.status(500).json({
-                error: err
-            });
-        });
-});
+routes.route('/:id/members').get(teams.findMembers);
 
-module.exports = router;
+module.exports = routes;
