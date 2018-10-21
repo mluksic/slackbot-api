@@ -2,6 +2,11 @@ const botResponse = require('../helpers/botResponse');
 const Employee = require('../models/employee');
 const Kudo = require('../models/kudo');
 
+const sendTexts = [
+    'Kudo was successfully arrived at your college kudo storage.',
+    "We didn't save the world, but we delivered your kudo."
+];
+
 exports.findAll = (req, res, next) => {
     Kudo.find()
         .exec()
@@ -42,7 +47,8 @@ exports.create = (req, res, next) => {
     const senderUsername = req.body['user_name'];
 
     if (receivers !== null) {
-        message = tagUserInMessage(message);
+        const textToSend = tagUserInMessage(message);
+        const messageForDatabase = deleteUserFromMessage(message);
         let receiverUsername = receivers.pop();
         receiverUsername = receiverUsername.substring(1);
 
@@ -67,7 +73,7 @@ exports.create = (req, res, next) => {
                 let kudo = new Kudo({
                     sender: sender._id,
                     receiver: receiver._id,
-                    message: message,
+                    message: messageForDatabase,
                     value: value,
                     approved: 0,
                     createdAt: date
@@ -80,7 +86,7 @@ exports.create = (req, res, next) => {
                             console.log('yes');
                             botResponse.openDirectMessageChanel(
                                 managerOfSender.slackId,
-                                message,
+                                textToSend,
                                 item._id
                             );
                         }
@@ -92,12 +98,12 @@ exports.create = (req, res, next) => {
                             console.log('yes');
                             botResponse.openDirectMessageChanel(
                                 managerOfSender.slackId,
-                                message,
+                                textToSend,
                                 item._id
                             );
                             botResponse.openDirectMessageChanel(
                                 managerOfReceiver.slackId,
-                                message,
+                                textToSend,
                                 item._id
                             );
                         }
@@ -107,7 +113,7 @@ exports.create = (req, res, next) => {
         });
     }
 
-    res.sendStatus(200);
+    res.status(200).send(sendTexts[Math.floor(Math.random() * 2)]);
 };
 
 getKudoValue = message => {
@@ -117,12 +123,16 @@ getKudoValue = message => {
     const pro = message.search(/\s(Pro!|:trophy:)$/i);
 
     if (shit != -1) {
+        message.replace(/\s(shit|:shit:|:poop:|:hankey:)$/i, '');
         return 0;
     } else if (carrot != -1) {
+        message.replace(/\s(:carrot:)$/i, '');
         return 1;
     } else if (yea != -1) {
+        message.replace(/\s(Fuck Yeah|:pizza:)$/i, '');
         return 2;
     } else if (pro != -1) {
+        message.replace(/\s(Pro!|:trophy:)$/i, '');
         return 3;
     } else {
         return 1;
@@ -176,4 +186,10 @@ tagUserInMessage = message => {
     const user = message.match(/@\S+/);
     const newMessage = message.replace(/@\S+/, '<' + user[0] + '>');
     return newMessage;
+};
+
+deleteUserFromMessage = message => {
+    const newMessage = message.replace(/@\S+/, '');
+
+    return newMessage.substring(1);
 };
