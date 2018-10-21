@@ -36,14 +36,16 @@ exports.findById = (req, res, next) => {
 };
 
 exports.create = (req, res, next) => {
-    const message = req.body.text;
+    let message = req.body.text;
     const value = getKudoValue(message);
     const receivers = getReceiverUsername(message);
     const senderUsername = req.body['user_name'];
 
     if (receivers !== null) {
+        message = tagUserInMessage(message);
         let receiverUsername = receivers.pop();
         receiverUsername = receiverUsername.substring(1);
+
         let promises = [];
         promises.push(findBySlackUsername(senderUsername));
         promises.push(findBySlackUsername(receiverUsername));
@@ -60,6 +62,7 @@ exports.create = (req, res, next) => {
                 const managerOfSender = result[0];
                 const managerOfReceiver = result[1];
 
+                console.log('yes');
                 const date = Date.now();
                 let kudo = new Kudo({
                     sender: sender._id,
@@ -73,8 +76,8 @@ exports.create = (req, res, next) => {
                 if (receiver.manager === sender.manager) {
                     kudo.approved = 1;
                     kudo.save((err, item) => {
-                        console.log(item);
                         if (item) {
+                            console.log('yes');
                             botResponse.openDirectMessageChanel(
                                 managerOfSender.slackId,
                                 message,
@@ -86,6 +89,7 @@ exports.create = (req, res, next) => {
                     kudo.approved = 0;
                     kudo.save((err, item) => {
                         if (item) {
+                            console.log('yes');
                             botResponse.openDirectMessageChanel(
                                 managerOfSender.slackId,
                                 message,
@@ -114,7 +118,8 @@ getKudoValue = message => {
 
     if (shit != -1) {
         return 0;
-    } else if (carrot != 1) {
+    } else if (carrot != -1) {
+        return 1;
     } else if (yea != -1) {
         return 2;
     } else if (pro != -1) {
@@ -149,7 +154,6 @@ findBySlackUsername = slackUsername => {
 };
 
 findManager = user => {
-    console.log(user);
     return new Promise((resolve, reject) => {
         Employee.findOne({ _id: user.manager[0] })
             .exec()
@@ -166,4 +170,10 @@ findManager = user => {
                 });
             });
     });
+};
+
+tagUserInMessage = message => {
+    const user = message.match(/@\S+/);
+    const newMessage = message.replace(/@\S+/, '<' + user[0] + '>');
+    return newMessage;
 };

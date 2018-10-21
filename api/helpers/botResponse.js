@@ -42,7 +42,7 @@ sendKudoApprove = (text, channel, kudoId) => {
                             text: 'Decline',
                             type: 'button',
                             style: 'danger',
-                            value: false
+                            value: null
                         }
                     ]
                 }
