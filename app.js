@@ -3,12 +3,16 @@ const app = express();
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const cors = require('cors');
 
 const rolesRoutes = require('./api/routes/roles');
 const teamRoutes = require('./api/routes/teams');
 const employeesRoutes = require('./api/routes/employees');
 
 const fixtures = require('./api/fixtures');
+const botRoutes = require('./api/routes/bot');
+const kudosRoutes = require('./api/routes/kudos');
+const kudoApproveRoutes = require('./api/routes/kudoApprove');
 
 mongoose.connect(
     'mongodb://' +
@@ -28,19 +32,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // CORS header
-app.use((res, req, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Headers', '*');
-    if (req.method === 'OPTIONS') {
-        res.header('Access-Control-Methods', 'PUT, POST, GET, DELETE');
-        return res.status(200).json();
-    }
-    next();
-});
+app.use(cors());
 
 app.use('/roles', rolesRoutes);
 app.use('/teams', teamRoutes);
 app.use('/employees', employeesRoutes);
+app.use('/bot', botRoutes);
+app.use('/kudos', kudosRoutes);
+app.use('/kudoApprove', kudoApproveRoutes);
 
 app.use((req, res, next) => {
     const error = new Error('Not found');
