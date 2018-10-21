@@ -52,68 +52,70 @@ exports.create = (req, res, next) => {
         let receiverUsername = receivers.pop();
         receiverUsername = receiverUsername.substring(1);
 
-        let promises = [];
-        promises.push(findBySlackUsername(senderUsername));
-        promises.push(findBySlackUsername(receiverUsername));
+        if (receiverUsername !== senderUsername) {
+            let promises = [];
+            promises.push(findBySlackUsername(senderUsername));
+            promises.push(findBySlackUsername(receiverUsername));
 
-        Promise.all(promises).then(result => {
-            let sender = result[0];
-            let receiver = result[1];
+            Promise.all(promises).then(result => {
+                let sender = result[0];
+                let receiver = result[1];
 
-            let managerPromises = [];
-            managerPromises.push(findManager(sender));
-            managerPromises.push(findManager(receiver));
+                let managerPromises = [];
+                managerPromises.push(findManager(sender));
+                managerPromises.push(findManager(receiver));
 
-            Promise.all(managerPromises).then(result => {
-                const managerOfSender = result[0];
-                const managerOfReceiver = result[1];
+                Promise.all(managerPromises).then(result => {
+                    const managerOfSender = result[0];
+                    const managerOfReceiver = result[1];
 
-                console.log('yes');
-                const date = Date.now();
-                let kudo = new Kudo({
-                    sender: sender._id,
-                    receiver: receiver._id,
-                    message: messageForDatabase,
-                    value: value,
-                    approved: 0,
-                    createdAt: date
+                    console.log('yes');
+                    const date = Date.now();
+                    let kudo = new Kudo({
+                        sender: sender._id,
+                        receiver: receiver._id,
+                        message: messageForDatabase,
+                        value: value,
+                        approved: 0,
+                        createdAt: date
+                    });
+
+                    if (receiver.manager === sender.manager) {
+                        kudo.approved = 1;
+                        kudo.save((err, item) => {
+                            if (item) {
+                                console.log('yes');
+                                botResponse.openDirectMessageChanel(
+                                    managerOfSender.slackId,
+                                    textToSend,
+                                    item._id
+                                );
+                            }
+                        });
+                    } else {
+                        kudo.approved = 0;
+                        kudo.save((err, item) => {
+                            if (item) {
+                                console.log('yes');
+                                botResponse.openDirectMessageChanel(
+                                    managerOfSender.slackId,
+                                    textToSend,
+                                    item._id
+                                );
+                                botResponse.openDirectMessageChanel(
+                                    managerOfReceiver.slackId,
+                                    textToSend,
+                                    item._id
+                                );
+                            }
+                        });
+                    }
                 });
-
-                if (receiver.manager === sender.manager) {
-                    kudo.approved = 1;
-                    kudo.save((err, item) => {
-                        if (item) {
-                            console.log('yes');
-                            botResponse.openDirectMessageChanel(
-                                managerOfSender.slackId,
-                                textToSend,
-                                item._id
-                            );
-                        }
-                    });
-                } else {
-                    kudo.approved = 0;
-                    kudo.save((err, item) => {
-                        if (item) {
-                            console.log('yes');
-                            botResponse.openDirectMessageChanel(
-                                managerOfSender.slackId,
-                                textToSend,
-                                item._id
-                            );
-                            botResponse.openDirectMessageChanel(
-                                managerOfReceiver.slackId,
-                                textToSend,
-                                item._id
-                            );
-                        }
-                    });
-                }
             });
-        });
-    }
+        }
 
-    res.status(200).send(sendTexts[Math.floor(Math.random() * 2)]);
+        res.status(200).send(sendTexts[Math.floor(Math.random() * 2)]);
+    }
 };
 
 getKudoValue = message => {

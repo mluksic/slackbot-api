@@ -1,5 +1,7 @@
 const Employee = require('../models/employee');
 const Kudo = require('../models/kudo');
+const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
 
 exports.findAll = (req, res, next) => {
     Employee.paginate()
@@ -43,31 +45,72 @@ exports.findById = (req, res, next) => {
 
 exports.getKudosForEmployee = (req, res, next) => {
     const id = req.params.id;
-    Employee.findOne({ _id: id })
-        .exec()
-        .then(doc => {
-            if (doc) {
-                Kudo.find({ receiver: doc._id })
-                    .exec()
-                    .then(doc => {
-                        res.send(doc);
-                    })
-                    .catch(err => {
-                        console.log(err);
-                        res.status(500).json({
-                            error: err
-                        });
-                    });
-            } else {
-                res.status(404).json({
-                    message: 'No valid entry found'
-                });
+    Kudo.aggregate(
+        [
+            {
+                $lookup: {
+                    from: 'employees',
+                    localField: 'receiver',
+                    foreignField: '_id',
+                    as: 'receiver'
+                }
+            },
+            {
+                $unwind: '$receiver'
+            },
+            {
+                $lookup: {
+                    from: 'employees',
+                    localField: 'sender',
+                    foreignField: '_id',
+                    as: 'sender'
+                }
+            },
+            {
+                $unwind: '$sender'
+            },
+            {
+                $match: { 'receiver._id': ObjectId(id) }
             }
-        })
-        .catch(err => {
-            console.log(err);
-            res.status(500).json({
-                error: err
-            });
-        });
+        ],
+        (err, results) => {
+            res.send(results);
+        }
+    );
+};
+
+exports.getShit = (req, res, next) => {
+    const id = req.params.id;
+    Kudo.aggregate(
+        [
+            {
+                $lookup: {
+                    from: 'employees',
+                    localField: 'receiver',
+                    foreignField: '_id',
+                    as: 'receiver'
+                }
+            },
+            {
+                $unwind: '$receiver'
+            },
+            {
+                $lookup: {
+                    from: 'employees',
+                    localField: 'sender',
+                    foreignField: '_id',
+                    as: 'sender'
+                }
+            },
+            {
+                $unwind: '$sender'
+            },
+            {
+                $match: { $and: [{ 'receiver._id': ObjectId(id) }, { value: { $eq: 0 } }] }
+            }
+        ],
+        (err, results) => {
+            res.send(results);
+        }
+    );
 };

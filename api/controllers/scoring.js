@@ -81,9 +81,7 @@ exports.getKudoScoringEmployees = (req, res, next) => {
     }
     let and = [{ 'kudo.approved': { $gt: 1 } }, { 'kudo.createdAt': { $gte: date } }];
     if (payload.team) {
-        console.log(payload.team);
         and.push({ 'team._id': ObjectId(payload.team) });
-        console.log(and);
         match = { $and: and };
     } else {
         match = { $and: and };
@@ -148,34 +146,51 @@ exports.getKudoScoringEmployees = (req, res, next) => {
 };
 
 exports.getLastKudos = (req, res, next) => {
-    Employee.aggregate(
+    const payload = req.query;
+
+    if (payload.team) {
+        {
+            match = {
+                $and: [
+                    ({ approved: { $gt: 1 } },
+                    { 'receiver.team': ObjectId(payload.team) },
+                    { value: { $gt: 0 } })
+                ]
+            };
+        }
+    } else {
+        match = {
+            $and: [({ approved: { $gt: 1 } }, { value: { $gt: 0 } })]
+        };
+    }
+    Kudo.aggregate(
         [
             {
                 $lookup: {
-                    from: 'kudos',
-                    localField: '_id',
-                    foreignField: 'receiver',
-                    as: 'kudo'
+                    from: 'employees',
+                    localField: 'receiver',
+                    foreignField: '_id',
+                    as: 'receiver'
                 }
             },
             {
-                $unwind: '$kudo'
+                $unwind: '$receiver'
             },
             {
                 $lookup: {
-                    from: 'teams',
-                    localField: 'team',
+                    from: 'employees',
+                    localField: 'sender',
                     foreignField: '_id',
-                    as: 'team'
+                    as: 'sender'
                 }
             },
             {
-                $unwind: '$team'
+                $unwind: '$sender'
             },
             {
-                $match: { 'kudo.approved': { $gt: 1 } }
+                $match: match
             },
-            { $sort: { 'kudo.createdAt': -1 } },
+            { $sort: { createdAt: -1 } },
             { $limit: 10 }
         ],
         (err, results) => {
