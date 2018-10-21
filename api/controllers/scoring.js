@@ -146,3 +146,40 @@ exports.getKudoScoringEmployees = (req, res, next) => {
         }
     );
 };
+
+exports.getLastKudos = (req, res, next) => {
+    Employee.aggregate(
+        [
+            {
+                $lookup: {
+                    from: 'kudos',
+                    localField: '_id',
+                    foreignField: 'receiver',
+                    as: 'kudo'
+                }
+            },
+            {
+                $unwind: '$kudo'
+            },
+            {
+                $lookup: {
+                    from: 'teams',
+                    localField: 'team',
+                    foreignField: '_id',
+                    as: 'team'
+                }
+            },
+            {
+                $unwind: '$team'
+            },
+            {
+                $match: { 'kudo.approved': { $gt: 1 } }
+            },
+            { $sort: { 'kudo.createdAt': -1 } },
+            { $limit: 10 }
+        ],
+        (err, results) => {
+            res.send(results);
+        }
+    );
+};

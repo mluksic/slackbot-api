@@ -2,10 +2,9 @@ const Employee = require('../models/employee');
 const Kudo = require('../models/kudo');
 
 exports.findAll = (req, res, next) => {
-    Employee.find()
-        .exec()
+    Employee.paginate()
         .then(docs => {
-            res.status(200).json(docs);
+            res.json(docs, [{ rel: 'self', method: 'GET', href: 'http://127.0.0.1/employees' }]);
         })
         .catch(err => {
             res.status(500).json(err.message);
@@ -19,7 +18,15 @@ exports.findById = (req, res, next) => {
         .exec()
         .then(doc => {
             if (doc) {
-                res.status(200).json(doc);
+                res.json(doc, [
+                    { rel: 'self', method: 'GET', href: 'http://127.0.0.1/employess/' + doc._id },
+                    {
+                        rel: 'self',
+                        method: 'GET',
+                        title: 'Get all employees',
+                        href: 'http://127.0.0.1/employees'
+                    }
+                ]);
             } else {
                 res.status(404).json({
                     message: 'No valid entry found'

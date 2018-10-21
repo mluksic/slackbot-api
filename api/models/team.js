@@ -1,4 +1,6 @@
-const mongoose = require('mongoose');
+var mongoose = require('mongoose');
+var mongoosePaginate = require('mongoose-paginate-v2');
+
 const Schema = mongoose.Schema;
 
 const teamSchema = mongoose.Schema({
@@ -6,5 +8,7 @@ const teamSchema = mongoose.Schema({
     name: String,
     members: [{ type: Schema.Types.ObjectId, ref: 'Employee' }]
 });
+
+teamSchema.plugin(mongoosePaginate);
 
 module.exports = mongoose.model('Team', teamSchema);

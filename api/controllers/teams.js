@@ -3,8 +3,7 @@ const Employee = require('../models/employee');
 const Kudo = require('../models/kudo');
 
 exports.findAll = (req, res, next) => {
-    Team.find()
-        .exec()
+    Team.paginate()
         .then(docs => {
             res.status(200).json(docs);
         })

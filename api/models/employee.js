@@ -1,4 +1,5 @@
-const mongoose = require('mongoose');
+var mongoose = require('mongoose');
+var mongoosePaginate = require('mongoose-paginate-v2');
 const Schema = mongoose.Schema;
 
 const employeesSchema = mongoose.Schema({
@@ -12,5 +13,7 @@ const employeesSchema = mongoose.Schema({
     slackUsername: String,
     manager: [this]
 });
+
+employeesSchema.plugin(mongoosePaginate);
 
 module.exports = mongoose.model('Employee', employeesSchema);
