@@ -16,7 +16,7 @@
         "express-hateoas-links": "^1.0.9",
         "mongoose": "^5.3.4",
         "mongoose-paginate-v2": "^1.0.12",
-        "node-fetch": "^2.2.0"
+        "node-fetch": "^2.6.1"
     },
     "devDependencies": {
         "morgan": "^1.9.1",
